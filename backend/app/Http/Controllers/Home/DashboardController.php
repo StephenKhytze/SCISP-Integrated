@@ -22,8 +22,23 @@ class DashboardController extends Controller
         $announcementsCount = Announcement::count();
         $urgentAnnouncementsCount = Announcement::where('title', 'like', '%Urgent%')->count(); 
 
+        // Calculate current academic year and semester
+        $currentYear = date('Y');
+        $month = date('n');
+        if ($month >= 8) {
+            $ay = "AY {$currentYear}-" . ($currentYear + 1);
+            $sem = "First Semester";
+        } elseif ($month >= 1 && $month <= 5) {
+            $ay = "AY " . ($currentYear - 1) . "-{$currentYear}";
+            $sem = "Second Semester";
+        } else {
+            $ay = "AY " . ($currentYear - 1) . "-{$currentYear}";
+            $sem = "Summer Term";
+        }
+
         $response = [
             'role' => $role,
+            'current_term' => "$ay $sem",
             'announcements' => [
                 'total' => $announcementsCount > 0 ? $announcementsCount : 3,
                 'urgent' => $urgentAnnouncementsCount > 0 ? $urgentAnnouncementsCount : 1

@@ -77,7 +77,7 @@ export default function Dashboard() {
                 Welcome Back, {currentUser?.name || 'Juan Dela Cruz'}!
               </h1>
               <p className="text-white/90 text-sm sm:text-base leading-relaxed font-normal">
-                Welcome to your ABC School student hub for AY 2024-2025 First Semester. Track your daily class schedules, stay informed with official announcements, and explore digital library resources all in one place.
+                Welcome to your ABC School student hub for {metrics?.current_term || 'AY 2024-2025 First Semester'}. Track your daily class schedules, stay informed with official announcements, and explore digital library resources all in one place.
               </p>
             </div>
             {/* Subtle background decoration */}
