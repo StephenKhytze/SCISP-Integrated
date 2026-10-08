@@ -79,12 +79,12 @@ class StudentController extends Controller
     // only faculty and admins get to browse other students, see the use case diagram
     private function isStaff()
     {
-        return in_array(Auth::user()->role, ['administrator', 'faculty']);
+        return in_array(strtolower(Auth::user()->role), ['admin', 'administrator', 'superadmin', 'super admin', 'faculty', 'teacher']);
     }
 
     private function isAdmin()
     {
-        return Auth::user()->role === 'administrator';
+        return in_array(strtolower(Auth::user()->role), ['admin', 'administrator', 'superadmin', 'super admin']);
     }
 
     private function owns(Student $student)
@@ -108,7 +108,7 @@ class StudentController extends Controller
 
     private function isFaculty()
     {
-        return Auth::user()->role === 'faculty';
+        return in_array(strtolower(Auth::user()->role), ['faculty', 'teacher']);
     }
 
     // who may change the profile: the student their own contact details, the
@@ -122,10 +122,10 @@ class StudentController extends Controller
     // the label the page and the audit trail show, same words the login uses
     private function roleLabel()
     {
-        return [
-            'administrator' => 'Admin',
-            'faculty' => 'Teacher',
-        ][Auth::user()->role] ?? 'Student';
+        $role = strtolower(Auth::user()->role);
+        if (in_array($role, ['admin', 'administrator', 'superadmin', 'super admin'])) return 'Admin';
+        if (in_array($role, ['faculty', 'teacher'])) return 'Teacher';
+        return 'Student';
     }
 
     // who did it, for the audit trail. a student has no name in users, so

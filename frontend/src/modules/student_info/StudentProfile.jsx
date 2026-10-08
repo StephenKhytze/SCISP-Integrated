@@ -1759,8 +1759,9 @@ export default function StudentProfile() {
   // or labels roles doesn't matter to this page.
   const [me, setMe] = useState(null);
 
-  const isAdmin = me?.role === 'administrator';
-  const isFaculty = me?.role === 'faculty';
+  const roleRaw = (me?.role || '').toLowerCase();
+  const isAdmin = roleRaw === 'admin' || roleRaw === 'administrator' || roleRaw === 'superadmin' || roleRaw === 'super admin';
+  const isFaculty = roleRaw === 'faculty' || roleRaw === 'teacher';
   const isStaff = isAdmin || isFaculty;
 
   // the admin fixes the whole record, contact details included, and a
