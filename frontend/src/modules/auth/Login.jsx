@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import GoogleAuthModal from './GoogleAuthModal';
 import ForgotPasswordModal from './ForgotPasswordModal';
+import FirstTimePasswordModal from './FirstTimePasswordModal';
 
 export default function Login({ onLogin }) {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ export default function Login({ onLogin }) {
   const [loading, setLoading] = useState(false);
   const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
   const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
+  const [firstTimeUser, setFirstTimeUser] = useState(null);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -29,6 +31,11 @@ export default function Login({ onLogin }) {
 
       localStorage.setItem('access_token', response.data.access_token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
+
+      if (response.data.user?.must_change_password) {
+        setFirstTimeUser(response.data.user);
+        return;
+      }
 
       if (onLogin) {
         onLogin(response.data.user);
@@ -184,6 +191,10 @@ export default function Login({ onLogin }) {
         isOpen={isGoogleModalOpen} 
         onClose={() => setIsGoogleModalOpen(false)}
         onLoginSuccess={(user) => {
+          if (user?.must_change_password) {
+            setFirstTimeUser(user);
+            return;
+          }
           if (onLogin) onLogin(user);
           navigate('/');
         }}
@@ -193,6 +204,17 @@ export default function Login({ onLogin }) {
       <ForgotPasswordModal 
         isOpen={isForgotModalOpen}
         onClose={() => setIsForgotModalOpen(false)}
+      />
+
+      <FirstTimePasswordModal
+        isOpen={!!firstTimeUser}
+        user={firstTimeUser}
+        onPasswordSet={(freshUser) => {
+          setFirstTimeUser(null);
+          if (onLogin) onLogin(freshUser);
+          navigate('/');
+        }}
+        onClose={() => setFirstTimeUser(null)}
       />
     </div>
   );

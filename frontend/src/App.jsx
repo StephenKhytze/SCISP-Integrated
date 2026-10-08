@@ -7,6 +7,7 @@ import LibraryPortal from './modules/library/LibraryPortal';
 import StudentProfile from './modules/student_info/StudentProfile';
 import FacultyList from './modules/faculty/FacultyList';
 import Login from './modules/auth/Login';
+import StudentRegisterForm from './modules/auth/StudentRegisterForm';
 import RegistrationConfirmation from './modules/admin/RegistrationConfirmation';
 
 function ProtectedRoute({ children }) {
@@ -25,7 +26,7 @@ function App() {
       <Routes>
         {/* Auth Routes without Layout */}
         <Route path="/auth" element={<PublicRoute><Login /></PublicRoute>} />
-        <Route path="/register" element={<PublicRoute><Login /></PublicRoute>} />
+        <Route path="/register" element={<PublicRoute><StudentRegisterForm /></PublicRoute>} />
         
         {/* Main Routes wrapped in the template Layout */}
         <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
