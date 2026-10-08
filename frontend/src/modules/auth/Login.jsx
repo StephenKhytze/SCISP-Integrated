@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
+import GoogleAuthModal from './GoogleAuthModal';
 
 export default function Login({ onLogin }) {
   const navigate = useNavigate();
@@ -9,6 +10,7 @@ export default function Login({ onLogin }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -109,6 +111,7 @@ export default function Login({ onLogin }) {
 
             <button
               type="button"
+              onClick={() => setIsGoogleModalOpen(true)}
               className="w-full flex items-center justify-center space-x-3 px-5 py-3.5 bg-white border border-gray-300 rounded-full hover:bg-gray-50 transition-colors shadow-sm"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -166,6 +169,16 @@ export default function Login({ onLogin }) {
         </div>
 
       </div>
+      
+      <GoogleAuthModal 
+        isOpen={isGoogleModalOpen} 
+        onClose={() => setIsGoogleModalOpen(false)}
+        onLoginSuccess={(user) => {
+          if (onLogin) onLogin(user);
+          navigate('/');
+        }}
+        onSwitchToRegister={() => navigate('/register')}
+      />
     </div>
   );
 }
