@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Library\LibraryController;
 
-Route::prefix('library')->middleware(\App\Http\Middleware\LibraryRoleMiddleware::class)->group(function () {
+Route::prefix('library')->middleware(['auth.jwt', \App\Http\Middleware\LibraryRoleMiddleware::class])->group(function () {
     Route::get('/', [LibraryController::class, 'index']);
     
     // Public Catalog Search (Authenticated users)

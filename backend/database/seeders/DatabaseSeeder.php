@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // 1. Student Account
-        User::updateOrCreate(
+        $studentUser = User::updateOrCreate(
             ['username' => 'Tennywoop1214'],
             [
                 'first_name' => 'Kirsten Eve',
@@ -27,6 +27,34 @@ class DatabaseSeeder extends Seeder
                 'department' => 'BS Information Technology',
                 'id_number' => '2024-01214',
                 'status' => 'active',
+            ]
+        );
+
+        $student = \App\Models\Student::updateOrCreate(
+            ['student_number' => '2024-01214'],
+            [
+                'user_id' => $studentUser->id,
+                'first_name' => 'Kirsten Eve',
+                'last_name' => 'Estiva',
+                'email_address' => 'kirsten.estiva@abc.edu.ph',
+                'gender' => 'Female',
+                'civil_status' => 'Single',
+                'date_of_birth' => '2000-12-14',
+                'enrollment_status' => 'Enrolled',
+                'contact_number' => '+63 912 345 6789',
+                'address' => '123 Test Street, Manila',
+            ]
+        );
+
+        \App\Models\AcademicRecord::updateOrCreate(
+            ['student_id' => $student->student_id],
+            [
+                'department' => 'College of Computer Studies',
+                'course' => 'BSIT',
+                'year_level' => 3,
+                'section' => 'Section 3A',
+                'school_year' => '2023-2024',
+                'semester' => '1st Semester',
             ]
         );
 
@@ -74,5 +102,12 @@ class DatabaseSeeder extends Seeder
                 'status' => 'active',
             ]
         );
+
+        // Additional Seeders
+        $this->call([
+            LibrarySeeder::class,
+            SubjectSeeder::class,
+            FacultySeeder::class,
+        ]);
     }
 }

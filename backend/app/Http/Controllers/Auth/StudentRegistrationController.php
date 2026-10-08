@@ -224,7 +224,32 @@ class StudentRegistrationController extends Controller
                 'must_change_password' => true,
             ]);
 
-            // 2. Update registration status
+            // 2. Create the actual Student Record
+            $student = \App\Models\Student::create([
+                'user_id' => $user->user_id,
+                'student_number' => $user->id_number,
+                'first_name' => $registration->first_name,
+                'last_name' => $registration->last_name,
+                'middle_name' => $registration->middle_name,
+                'email_address' => $registration->email,
+                'gender' => $registration->gender,
+                'date_of_birth' => $registration->birthdate,
+                'contact_number' => $registration->contact_number,
+                'address' => $registration->home_address,
+                'enrollment_status' => 'Enrolled',
+                'date_enrolled' => now(),
+            ]);
+
+            \App\Models\AcademicRecord::create([
+                'student_id' => $student->student_id,
+                'course' => $registration->program,
+                'year_level' => intval($registration->year_level ?: 1),
+                'section' => 'Unassigned',
+                'school_year' => '2023-2024',
+                'semester' => '1st Semester',
+            ]);
+
+            // 3. Update registration status
             $registration->update([
                 'status' => 'approved',
                 'admin_notes' => $adminNotes,

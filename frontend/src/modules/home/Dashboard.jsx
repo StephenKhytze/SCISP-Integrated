@@ -105,12 +105,12 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  {metrics?.student_metrics?.classes_today || 4} Subjects
+                  {metrics?.student_metrics?.classes_today ?? 0} Subjects
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-slate-600 font-medium">
                 <Clock className="w-3.5 h-3.5 text-[#80172B]" />
-                <span>Next: <strong className="text-slate-800 font-bold">{metrics?.student_metrics?.next_class || 'IT 311 (8:00 AM)'}</strong></span>
+                <span>Next: <strong className="text-slate-800 font-bold">{metrics?.student_metrics?.next_class ?? 'None scheduled'}</strong></span>
               </div>
             </div>
 
@@ -132,12 +132,12 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  {metrics?.announcements?.total || 3} Notices
+                  {metrics?.announcements?.total ?? 0} Notices
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-[#b45309] font-bold">
                 <FileText className="w-3.5 h-3.5 text-[#b45309]" />
-                <span>{metrics?.announcements?.urgent || 1} Urgent Announcement</span>
+                <span>{metrics?.announcements?.urgent ?? 0} Urgent Announcement{metrics?.announcements?.urgent !== 1 ? 's' : ''}</span>
               </div>
             </div>
 
@@ -159,12 +159,12 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  {metrics?.student_metrics?.borrowed_books || 1} Borrowed
+                  {metrics?.student_metrics?.borrowed_books ?? 0} Borrowed
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-[#2563eb] font-semibold">
                 <Clock className="w-3.5 h-3.5 text-[#2563eb]" />
-                <span>Due in {metrics?.student_metrics?.due_in_days || 13} days</span>
+                <span>{metrics?.student_metrics?.borrowed_books > 0 ? `Due in ${metrics?.student_metrics?.due_in_days ?? 0} days` : 'No upcoming due dates'}</span>
               </div>
             </div>
 
@@ -182,12 +182,12 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  {metrics?.student_metrics?.gpa || 1.25} GPA
+                  {metrics?.student_metrics?.gpa ?? 'N/A'} GPA
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-[#059669] font-bold">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" />
-                <span>{metrics?.student_metrics?.academic_standing || "Dean's List • Good Standing"}</span>
+                <span>{metrics?.student_metrics?.academic_standing ?? 'Regular'}</span>
               </div>
             </div>
 
@@ -208,55 +208,39 @@ export default function Dashboard() {
             </div>
 
             <div className="space-y-3.5">
-              {/* Class Schedule Item 1 */}
-              <div 
-                onClick={() => navigate('/schedule')}
-                className="bg-[#fcfdfd] border border-slate-100 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/90 hover:border-slate-200 transition-all cursor-pointer group"
-              >
-                <div className="flex items-center space-x-3.5">
-                  <div className="bg-[#80172B] text-white font-extrabold text-xs sm:text-sm px-3 py-2 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
-                    IT 311
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-slate-900 text-sm sm:text-base group-hover:text-[#80172B] transition-colors leading-snug">
-                      Web Development with React &amp; Laravel
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                      Engr. M. Santos - Lab 402 Tech Building
-                    </p>
-                  </div>
+              {!metrics?.student_metrics?.todays_classes || metrics.student_metrics.todays_classes.length === 0 ? (
+                <div className="py-8 text-center">
+                  <Calendar className="w-10 h-10 mx-auto text-slate-300 mb-3" />
+                  <p className="text-sm font-medium text-slate-500">No current classes for today</p>
                 </div>
-                <div className="self-start sm:self-center">
-                  <span className="inline-block px-3.5 py-1.5 rounded-full border border-rose-200 text-[#80172B] text-xs font-bold bg-white shadow-2xs">
-                    08:00 - 10:30 am
-                  </span>
-                </div>
-              </div>
-
-              {/* Class Schedule Item 2 */}
-              <div 
-                onClick={() => navigate('/schedule')}
-                className="bg-[#fcfdfd] border border-slate-100 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/90 hover:border-slate-200 transition-all cursor-pointer group"
-              >
-                <div className="flex items-center space-x-3.5">
-                  <div className="bg-[#80172B] text-white font-extrabold text-xs sm:text-sm px-3 py-2 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
-                    IT 311
+              ) : (
+                metrics.student_metrics.todays_classes.map((cls, idx) => (
+                  <div 
+                    key={idx}
+                    onClick={() => navigate('/schedule')}
+                    className="bg-[#fcfdfd] border border-slate-100 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/90 hover:border-slate-200 transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-center space-x-3.5">
+                      <div className="bg-[#80172B] text-white font-extrabold text-xs sm:text-sm px-3 py-2 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+                        {cls.course_code}
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-slate-900 text-sm sm:text-base group-hover:text-[#80172B] transition-colors leading-snug">
+                          {cls.course_name}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                          {cls.instructor} - {cls.room}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="self-start sm:self-center">
+                      <span className="inline-block px-3.5 py-1.5 rounded-full border border-rose-200 text-[#80172B] text-xs font-bold bg-white shadow-2xs">
+                        {cls.time_slot}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-slate-900 text-sm sm:text-base group-hover:text-[#80172B] transition-colors leading-snug">
-                      Web Development with React &amp; Laravel
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                      Engr. M. Santos - Lab 402 Tech Building
-                    </p>
-                  </div>
-                </div>
-                <div className="self-start sm:self-center">
-                  <span className="inline-block px-3.5 py-1.5 rounded-full border border-rose-200 text-[#80172B] text-xs font-bold bg-white shadow-2xs">
-                    08:00 - 10:30 am
-                  </span>
-                </div>
-              </div>
+                ))
+              )}
             </div>
           </div>
         </>
