@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
+import api from '../../services/api';
 import { 
   Calendar, 
   Megaphone, 
@@ -48,6 +49,20 @@ export default function Dashboard() {
   const isSuperAdmin = roleRaw === 'superadmin' || roleRaw === 'super admin';
   const isStudent = !isTeacher && !isAdmin && !isSuperAdmin;
 
+  const [metrics, setMetrics] = useState(null);
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const response = await api.get('/home/dashboard');
+        setMetrics(response.data);
+      } catch (err) {
+        console.error('Failed to load dashboard metrics', err);
+      }
+    };
+    fetchDashboard();
+  }, []);
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-8">
       {/* ========================================================================= */}
@@ -90,12 +105,12 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  4 Subjects
+                  {metrics?.student_metrics?.classes_today || 4} Subjects
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-slate-600 font-medium">
                 <Clock className="w-3.5 h-3.5 text-[#80172B]" />
-                <span>Next: <strong className="text-slate-800 font-bold">IT 311 (8:00 AM)</strong></span>
+                <span>Next: <strong className="text-slate-800 font-bold">{metrics?.student_metrics?.next_class || 'IT 311 (8:00 AM)'}</strong></span>
               </div>
             </div>
 
@@ -117,12 +132,12 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  3 Notices
+                  {metrics?.announcements?.total || 3} Notices
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-[#b45309] font-bold">
                 <FileText className="w-3.5 h-3.5 text-[#b45309]" />
-                <span>1 Urgent Announcement</span>
+                <span>{metrics?.announcements?.urgent || 1} Urgent Announcement</span>
               </div>
             </div>
 
@@ -144,12 +159,12 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  1 Borrowed
+                  {metrics?.student_metrics?.borrowed_books || 1} Borrowed
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-[#2563eb] font-semibold">
                 <Clock className="w-3.5 h-3.5 text-[#2563eb]" />
-                <span>Due in 13 days</span>
+                <span>Due in {metrics?.student_metrics?.due_in_days || 13} days</span>
               </div>
             </div>
 
@@ -167,12 +182,12 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  1.25 GPA
+                  {metrics?.student_metrics?.gpa || 1.25} GPA
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-[#059669] font-bold">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" />
-                <span>Dean's List • Good Standing</span>
+                <span>{metrics?.student_metrics?.academic_standing || "Dean's List • Good Standing"}</span>
               </div>
             </div>
 
@@ -309,7 +324,7 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  1,280 Students
+                  {metrics?.admin_metrics?.total_enrollees || '1,280'} Students
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-emerald-600 font-bold">
@@ -330,7 +345,7 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  48 Instructors
+                  {metrics?.admin_metrics?.active_faculty || 48} Instructors
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-blue-600 font-medium">
@@ -350,7 +365,7 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  94.2% Filled
+                  {metrics?.admin_metrics?.section_capacity || '94.2%'} Filled
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-indigo-600 font-medium">
@@ -523,7 +538,7 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  5 Classes
+                  {metrics?.teacher_metrics?.assigned_sections || 5} Classes
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-blue-700 font-bold">
