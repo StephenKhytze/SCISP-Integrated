@@ -25,7 +25,7 @@ class FacultySeeder extends Seeder
                     'building' => 'Tech Building',
                     'room' => 'Room 402',
                     'office_hours' => 'Mon-Fri 8am-5pm',
-                    'specializations' => '[]',
+                    'specializations' => [],
                 ]
             );
         }
@@ -57,7 +57,7 @@ class FacultySeeder extends Seeder
                 'building' => 'Main Building',
                 'room' => 'Room 101',
                 'office_hours' => 'Mon-Fri 8am-5pm',
-                'specializations' => '[]',
+                'specializations' => [],
             ]
         );
     }
