@@ -19,7 +19,6 @@ class IntegrationDemoSeeder extends Seeder
         }
 
         $this->call([
-            MockPersonaSeeder::class,
             StudentSeeder::class,
             TeachingLoadSeeder::class,
             AnnouncementSeeder::class,
