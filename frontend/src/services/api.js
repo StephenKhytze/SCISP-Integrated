@@ -9,7 +9,7 @@ const api = axios.create({
 
 // Automatically attach access token if it exists in localStorage
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token');
+  const token = (localStorage.getItem('access_token') || sessionStorage.getItem('access_token'));
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -22,8 +22,8 @@ api.interceptors.request.use((config) => {
 // to the login page instead of leaving every module stuck on a raw 401 error.
 api.interceptors.response.use((response) => response, (error) => {
   if (error.response?.status === 401 && window.location.pathname !== '/auth') {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('user');
+    localStorage.removeItem('access_token'); sessionStorage.removeItem('access_token');
+    localStorage.removeItem('user'); sessionStorage.removeItem('user');
     window.location.href = '/auth';
   }
   return Promise.reject(error);

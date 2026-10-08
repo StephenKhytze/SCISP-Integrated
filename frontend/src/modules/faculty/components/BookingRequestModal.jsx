@@ -9,7 +9,7 @@ const BOOKED_STATUSES = ['pending', 'approved'];
 export default function BookingRequestModal({ faculty, onClose }) {
   const currentUser = useMemo(() => {
     try {
-      return JSON.parse(localStorage.getItem('user'));
+      return JSON.parse((localStorage.getItem('user') || sessionStorage.getItem('user')));
     } catch {
       return null;
     }

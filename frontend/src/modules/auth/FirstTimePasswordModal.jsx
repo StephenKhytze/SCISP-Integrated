@@ -62,9 +62,19 @@ export default function FirstTimePasswordModal({ isOpen, user, onPasswordSet, on
         new_password_confirmation: confirmPassword,
       });
 
-      // Update tokens and user in localStorage
-      localStorage.setItem('access_token', response.data.access_token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      // Update tokens and user in localStorage or sessionStorage based on remember me
+      const isRemembered = Boolean(localStorage.getItem('scisp_remembered_username'));
+      if (isRemembered) {
+        localStorage.setItem('access_token', response.data.access_token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        sessionStorage.removeItem('access_token');
+        sessionStorage.removeItem('user');
+      } else {
+        sessionStorage.setItem('access_token', response.data.access_token);
+        sessionStorage.setItem('user', JSON.stringify(response.data.user));
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user');
+      }
 
       onPasswordSet(response.data.user);
     } catch (err) {

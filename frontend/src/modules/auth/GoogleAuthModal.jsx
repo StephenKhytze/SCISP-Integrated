@@ -33,8 +33,11 @@ export default function GoogleAuthModal({
 
   const handleAuthResponse = (data) => {
     const { access_token, user } = data;
-    localStorage.setItem('access_token', access_token);
-    localStorage.setItem('user', JSON.stringify(user));
+    // Use sessionStorage because there is no 'Remember Me' toggle in the Google Auth Modal
+    sessionStorage.setItem('access_token', access_token);
+    sessionStorage.setItem('user', JSON.stringify(user));
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('user');
 
     onLoginSuccess(user);
     handleClose();

@@ -10,7 +10,7 @@ const normalize = (role) => String(role || '').toLowerCase().replace(/[\s_-]/g, 
 
 function roleFromToken() {
   try {
-    const token = localStorage.getItem('access_token');
+    const token = (localStorage.getItem('access_token') || sessionStorage.getItem('access_token'));
     if (!token) return null;
     const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
     return JSON.parse(atob(payload)).role ?? null;
@@ -21,7 +21,7 @@ function roleFromToken() {
 
 function roleFromStoredUser() {
   try {
-    return JSON.parse(localStorage.getItem('user') || 'null')?.role ?? null;
+    return JSON.parse((localStorage.getItem('user') || sessionStorage.getItem('user')) || 'null')?.role ?? null;
   } catch {
     return null;
   }

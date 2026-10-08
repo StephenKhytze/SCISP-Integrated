@@ -71,12 +71,18 @@ export default function Login({ onLogin }) {
       });
 
       const user = response.data.user;
-      localStorage.setItem('access_token', response.data.access_token);
-      localStorage.setItem('user', JSON.stringify(user));
 
       if (rememberMe) {
+        localStorage.setItem('access_token', response.data.access_token);
+        localStorage.setItem('user', JSON.stringify(user));
+        sessionStorage.removeItem('access_token');
+        sessionStorage.removeItem('user');
         localStorage.setItem('scisp_remembered_username', username.trim());
       } else {
+        sessionStorage.setItem('access_token', response.data.access_token);
+        sessionStorage.setItem('user', JSON.stringify(user));
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user');
         localStorage.removeItem('scisp_remembered_username');
       }
 

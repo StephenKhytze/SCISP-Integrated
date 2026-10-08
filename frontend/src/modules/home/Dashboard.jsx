@@ -27,7 +27,7 @@ export default function Dashboard() {
   // Retrieve user from Outlet context or fallback to localStorage or default
   const storedUser = (() => {
     try {
-      const u = localStorage.getItem('user');
+      const u = (localStorage.getItem('user') || sessionStorage.getItem('user'));
       return u ? JSON.parse(u) : null;
     } catch {
       return null;

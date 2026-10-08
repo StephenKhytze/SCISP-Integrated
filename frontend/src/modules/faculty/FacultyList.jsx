@@ -25,7 +25,7 @@ const EMPTY_FILTERS = {
 export default function FacultyList() {
   const currentUser = useMemo(() => {
     try {
-      return JSON.parse(localStorage.getItem('user'));
+      return JSON.parse((localStorage.getItem('user') || sessionStorage.getItem('user')));
     } catch {
       return null;
     }

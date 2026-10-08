@@ -17,7 +17,7 @@ export default function Layout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(() => {
     try {
-      const userStr = localStorage.getItem('user');
+      const userStr = (localStorage.getItem('user') || sessionStorage.getItem('user'));
       return userStr ? JSON.parse(userStr) : DEFAULT_USER;
     } catch {
       return DEFAULT_USER;
@@ -40,8 +40,8 @@ export default function Layout() {
     } catch {
       // Proceed with local logout even if server fails
     } finally {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('user');
+      localStorage.removeItem('access_token'); sessionStorage.removeItem('access_token');
+      localStorage.removeItem('user'); sessionStorage.removeItem('user');
       navigate('/auth');
     }
   };

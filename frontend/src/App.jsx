@@ -10,12 +10,12 @@ import Login from './modules/auth/Login';
 import RegistrationConfirmation from './modules/admin/RegistrationConfirmation';
 
 function ProtectedRoute({ children }) {
-  const token = localStorage.getItem('access_token');
+  const token = (localStorage.getItem('access_token') || sessionStorage.getItem('access_token'));
   return token ? children : <Navigate to="/auth" replace />;
 }
 
 function PublicRoute({ children }) {
-  const token = localStorage.getItem('access_token');
+  const token = (localStorage.getItem('access_token') || sessionStorage.getItem('access_token'));
   return token ? <Navigate to="/" replace /> : children;
 }
 

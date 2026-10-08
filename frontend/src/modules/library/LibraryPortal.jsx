@@ -137,7 +137,7 @@ function LibraryPortalContent() {
   const bookModalRef = useDialog(!!selectedBook, () => setSelectedBook(null));
   const loanModalRef = useDialog(!!selectedLoan, () => setSelectedLoan(null));
   
-  const userStr = localStorage.getItem('user');
+  const userStr = (localStorage.getItem('user') || sessionStorage.getItem('user'));
   const user = userStr ? JSON.parse(userStr) : null;
 
   // Both administrator personas run the desk, so `isLibrarian` still gates every
