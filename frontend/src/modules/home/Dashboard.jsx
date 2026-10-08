@@ -369,7 +369,7 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-rose-700 tracking-tight">
-                  6 Pending Requests
+                  {metrics?.admin_metrics?.enlistment_overrides || 0} Pending
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-rose-600 font-medium">
@@ -543,7 +543,7 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  34 Students
+                  {metrics?.teacher_metrics?.student_advisees || 0} Students
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-purple-700 font-medium">
@@ -563,7 +563,7 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-amber-800 tracking-tight">
-                  28 Pending
+                  {metrics?.teacher_metrics?.grading_submissions || 0} Pending
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-amber-700 font-medium">
@@ -583,7 +583,7 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-emerald-700 tracking-tight">
-                  88% On Track
+                  {metrics?.teacher_metrics?.syllabus_coverage || '88% On Track'}
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-emerald-600 font-medium">
@@ -745,7 +745,7 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-cyan-400 tracking-tight">
-                  3,412 Online
+                  {metrics?.superadmin_metrics?.active_sessions || 0} Online
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-slate-400 font-medium">
@@ -765,7 +765,7 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-emerald-400 tracking-tight">
-                  99.99%
+                  {metrics?.superadmin_metrics?.uptime || '99.9%'}
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-emerald-400 font-medium">
@@ -785,7 +785,7 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-purple-300 tracking-tight">
-                  0 Threats
+                  {metrics?.superadmin_metrics?.security_threats || 0} Threats
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-slate-400 font-medium">
@@ -805,7 +805,7 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 mb-3">
                 <div className="text-2xl sm:text-3xl font-black text-blue-400 tracking-tight">
-                  42.8 GB / 120 GB
+                  {metrics?.superadmin_metrics?.storage_load || '42.8 GB / 120 GB'}
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-slate-400 font-medium">
