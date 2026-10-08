@@ -6,6 +6,10 @@ export default function Sidebar({ isMobileOpen = false, onClose = () => {}, onLo
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : null;
+  const isAdmin = user && (user.role?.toLowerCase() === 'administrator' || user.role?.toLowerCase() === 'superadmin' || user.role?.toLowerCase() === 'admin' || user.role?.toLowerCase() === 'super admin');
+
   const navItems = [
     { path: '/', label: 'Home', icon: Home },
     { path: '/schedule', label: 'Schedule', icon: Calendar },
@@ -14,6 +18,10 @@ export default function Sidebar({ isMobileOpen = false, onClose = () => {}, onLo
     { path: '/student-info', label: 'Student Information', icon: GraduationCap },
     { path: '/faculty', label: 'Faculty Directory', icon: Users },
   ];
+
+  if (isAdmin) {
+    navItems.splice(1, 0, { path: '/admin/registrations', label: 'Registrations', icon: Users });
+  }
 
   return (
     <>
