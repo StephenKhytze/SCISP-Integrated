@@ -11,8 +11,8 @@ import AdminReserveCard from './components/AdminReserveCard';
 import ClassmatesModal from './components/ClassmatesModal';
 import StatusBadge from './components/StatusBadge';
 import CategorySelect from './components/CategorySelect';
-import { useToast } from './ToastProvider';
-import { useConfirm } from './ConfirmDialog';
+import { ToastProvider, useToast } from './ToastProvider';
+import { ConfirmDialogProvider, useConfirm } from './ConfirmDialog';
 import useDialog from './hooks/useDialog';
 import { Loader2, Package, Settings, BookOpen } from 'lucide-react';
 
@@ -50,7 +50,7 @@ function BookCover({ src, alt = '', iconClassName = 'w-6 h-6 text-slate-300' }) 
   );
 }
 
-export default function LibraryPortal() {
+function LibraryPortalContent() {
   const toast = useToast();
   const confirm = useConfirm();
     const [activeTab, setActiveTab] = useState('catalog');
@@ -3024,6 +3024,16 @@ export default function LibraryPortal() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function LibraryPortal() {
+  return (
+    <ToastProvider>
+      <ConfirmDialogProvider>
+        <LibraryPortalContent />
+      </ConfirmDialogProvider>
+    </ToastProvider>
   );
 }
 
