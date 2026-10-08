@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Library\LibraryController;
 
-Route::prefix('library')->middleware(['auth.jwt', \App\Http\Middleware\MockAuthMiddleware::class])->group(function () {
+Route::prefix('library')->middleware(\App\Http\Middleware\LibraryRoleMiddleware::class)->group(function () {
     Route::get('/', [LibraryController::class, 'index']);
     
     // Public Catalog Search (Authenticated users)
@@ -17,7 +17,7 @@ Route::prefix('library')->middleware(['auth.jwt', \App\Http\Middleware\MockAuthM
     // Renewal now needs a librarian's decision. Borrowers may only ask;
     // Super Admin accounts cannot borrow, so they cannot ask either.
     Route::post('/renewals', [\App\Http\Controllers\Api\Library\RenewalController::class, 'store'])
-        ->middleware(\App\Http\Middleware\MockAuthMiddleware::class . ':Student,Faculty,Teacher,Admin');
+        ->middleware(\App\Http\Middleware\LibraryRoleMiddleware::class . ':Student,Faculty,Teacher,Admin');
     Route::get('/renewals/me', [\App\Http\Controllers\Api\Library\RenewalController::class, 'myRequests']);
     Route::get('/holds/me', [\App\Http\Controllers\Api\Library\HoldController::class, 'myHolds']);
 
@@ -37,39 +37,39 @@ Route::prefix('library')->middleware(['auth.jwt', \App\Http\Middleware\MockAuthM
     // Section management (H-3): faculty for their own sections, Admin and
     // Super Admin for all. Students use /sections/me and /classmates instead.
     Route::get('/sections', [\App\Http\Controllers\Api\Library\CourseSectionController::class, 'index'])
-        ->middleware(\App\Http\Middleware\MockAuthMiddleware::class . ':Super Admin,Admin,Teacher,Faculty');
+        ->middleware(\App\Http\Middleware\LibraryRoleMiddleware::class . ':Super Admin,Admin,Teacher,Faculty');
     Route::post('/sections', [\App\Http\Controllers\Api\Library\CourseSectionController::class, 'store'])
-        ->middleware(\App\Http\Middleware\MockAuthMiddleware::class . ':Super Admin,Admin,Teacher,Faculty');
+        ->middleware(\App\Http\Middleware\LibraryRoleMiddleware::class . ':Super Admin,Admin,Teacher,Faculty');
     // SEC-05: the student directory is roster tooling, not borrower-facing.
     // Faculty need it for the course-section roster UI; librarians may also use it.
     // Ordinary students must not be able to enumerate every other student.
     Route::get('/students', [\App\Http\Controllers\Api\Library\CourseSectionController::class, 'getStudents'])
-        ->middleware(\App\Http\Middleware\MockAuthMiddleware::class . ':Super Admin,Admin,Teacher,Faculty');
+        ->middleware(\App\Http\Middleware\LibraryRoleMiddleware::class . ':Super Admin,Admin,Teacher,Faculty');
     Route::post('/sections/{sectionId}/students', [\App\Http\Controllers\Api\Library\CourseSectionController::class, 'addStudent'])
-        ->middleware(\App\Http\Middleware\MockAuthMiddleware::class . ':Super Admin,Admin,Teacher,Faculty');
+        ->middleware(\App\Http\Middleware\LibraryRoleMiddleware::class . ':Super Admin,Admin,Teacher,Faculty');
     Route::delete('/sections/{sectionId}/students/{studentId}', [\App\Http\Controllers\Api\Library\CourseSectionController::class, 'removeStudent'])
-        ->middleware(\App\Http\Middleware\MockAuthMiddleware::class . ':Super Admin,Admin,Teacher,Faculty');
+        ->middleware(\App\Http\Middleware\LibraryRoleMiddleware::class . ':Super Admin,Admin,Teacher,Faculty');
 
     // Course Reserves
     // Faculty request a reserve for a section they own; that ownership check lives in
     // ReserveController::store. Admin/Super Admin may request for any section.
     // The admin-only listing (GET /reserves) is registered in the admin group below.
     Route::post('/reserves', [\App\Http\Controllers\Api\Library\ReserveController::class, 'store'])
-        ->middleware(\App\Http\Middleware\MockAuthMiddleware::class . ':Super Admin,Admin,Teacher,Faculty');
+        ->middleware(\App\Http\Middleware\LibraryRoleMiddleware::class . ':Super Admin,Admin,Teacher,Faculty');
 
     // D-3: an enrolled student asks to borrow from one course reserve. Only
     // that reserve's allocated copies are eligible; the librarian still does
     // the physical checkout.
     Route::post('/reserves/{id}/request', [\App\Http\Controllers\Api\Library\ReserveController::class, 'requestCopy'])
-        ->middleware(\App\Http\Middleware\MockAuthMiddleware::class . ':Student');
+        ->middleware(\App\Http\Middleware\LibraryRoleMiddleware::class . ':Student');
 
     // Admin/Super Admin may approve, deny or release. Faculty may release ONLY their own
     // reserve — that ownership check lives in ReserveController::updateStatus.
     Route::put('/reserves/{id}/status', [\App\Http\Controllers\Api\Library\ReserveController::class, 'updateStatus'])
-        ->middleware(\App\Http\Middleware\MockAuthMiddleware::class . ':Super Admin,Admin,Teacher,Faculty');
+        ->middleware(\App\Http\Middleware\LibraryRoleMiddleware::class . ':Super Admin,Admin,Teacher,Faculty');
     
     // Admin Inventory Management & Circulation
-    Route::middleware(\App\Http\Middleware\MockAuthMiddleware::class . ':Super Admin,Admin')->group(function () {
+    Route::middleware(\App\Http\Middleware\LibraryRoleMiddleware::class . ':Super Admin,Admin')->group(function () {
         Route::post('/books', [\App\Http\Controllers\Api\Library\BookController::class, 'store']);
         Route::put('/books/{id}', [\App\Http\Controllers\Api\Library\BookController::class, 'update']);
         Route::post('/books/{id}/copies', [\App\Http\Controllers\Api\Library\BookCopyController::class, 'store']);

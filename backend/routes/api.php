@@ -162,7 +162,7 @@ Route::middleware('auth.jwt')->group(function () {
     });
     // ---------------------------------------------------------------------------------------------
 
-    Route::middleware([\App\Http\Middleware\MockAuthMiddleware::class])->group(function () {
+    Route::middleware([\App\Http\Middleware\LibraryRoleMiddleware::class])->group(function () {
         Route::get('books', [\App\Http\Controllers\Api\Library\BookController::class, 'index']);
         Route::get('books/{id}', [\App\Http\Controllers\Api\Library\BookController::class, 'show']);
     });

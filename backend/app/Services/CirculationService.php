@@ -40,7 +40,7 @@ class CirculationService
      *
      * Roles reach this service in several vocabularies: the raw request header
      * ("Admin", "Super Admin", "Teacher") and the users.role enum
-     * ("administrator", "faculty", "student"). Mirrors MockAuthMiddleware.
+     * ("administrator", "faculty", "student"). Mirrors LibraryRoleMiddleware.
      */
     public function normalizeRole(?string $role): string
     {

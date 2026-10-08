@@ -11,8 +11,8 @@ import AdminReserveCard from './components/AdminReserveCard';
 import ClassmatesModal from './components/ClassmatesModal';
 import StatusBadge from './components/StatusBadge';
 import CategorySelect from './components/CategorySelect';
-import { ToastProvider, useToast } from './ToastProvider';
-import { ConfirmDialogProvider, useConfirm } from './ConfirmDialog';
+import { useToast } from './ToastProvider';
+import { useConfirm } from './ConfirmDialog';
 import useDialog from './hooks/useDialog';
 import { Loader2, Package, Settings, BookOpen } from 'lucide-react';
 
@@ -50,7 +50,7 @@ function BookCover({ src, alt = '', iconClassName = 'w-6 h-6 text-slate-300' }) 
   );
 }
 
-function LibraryPortalContent() {
+export default function LibraryPortal() {
   const toast = useToast();
   const confirm = useConfirm();
     const [activeTab, setActiveTab] = useState('catalog');
@@ -877,37 +877,28 @@ function LibraryPortalContent() {
 
             <div className="mb-4">
               <h3 className="text-[10px] font-bold text-gray-400 tracking-wider uppercase mb-1">Your Borrowing Rule</h3>
-              {!summary ? (
-                <div className="h-5 w-24 bg-slate-200 rounded animate-pulse mt-1"></div>
-              ) : (
-                <span className="inline-block bg-slate-100 text-slate-800 border border-slate-200 text-[11px] font-extrabold px-2.5 py-0.5 rounded uppercase">
-                  {roleLabel ?? '—'}
-                </span>
-              )}
+              {/* Neutral background - NO yellow background */}
+              <span className="inline-block bg-slate-100 text-slate-800 border border-slate-200 text-[11px] font-extrabold px-2.5 py-0.5 rounded uppercase">
+                {roleLabel ?? '—'}
+              </span>
             </div>
 
             <div className="mb-4">
               <h3 className="text-[10px] font-bold text-gray-400 tracking-wider uppercase mb-1">Loan Privilege Limit</h3>
-              <div className="font-extrabold text-[#0f172a] text-[15px]">
-                {!summary ? (
-                  <div className="h-5 w-48 bg-slate-200 rounded animate-pulse mt-1"></div>
-                ) : summary.can_borrow === false ? (
-                  'Management account — borrowing not available'
-                ) : (
-                  `${borrowLimit ? `Max ${borrowLimit} Books` : 'No borrowing limit'} (${loanDays}-Day Loan)`
-                )}
-              </div>
+              <p className="font-extrabold text-[#0f172a] text-[15px]">
+                {!summary
+                  ? 'Loading your borrowing rule…'
+                  : summary.can_borrow === false
+                    ? 'Management account — borrowing not available'
+                    : `${borrowLimit ? `Max ${borrowLimit} Books` : 'No borrowing limit'} (${loanDays}-Day Loan)`}
+              </p>
             </div>
 
             <div>
               <h3 className="text-[10px] font-bold text-gray-400 tracking-wider uppercase mb-1">Overdue Late Fine</h3>
-              <div className="font-extrabold text-[#0f172a] text-[15px]">
-                {!summary ? (
-                  <div className="h-5 w-24 bg-slate-200 rounded animate-pulse mt-1"></div>
-                ) : (
-                  `${peso(dailyRate)} / Day`
-                )}
-              </div>
+              <p className="font-extrabold text-[#0f172a] text-[15px]">
+                {peso(dailyRate)} / Day
+              </p>
             </div>
           </div>
         </div>
@@ -1812,37 +1803,28 @@ function LibraryPortalContent() {
           <div className="border border-slate-200/80 rounded-xl p-6 bg-white grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-slate-100">
             <div className="md:pr-4">
               <h3 className="text-[9.5px] font-extrabold text-slate-400 tracking-wider uppercase mb-1">YOUR BORROWING RULE</h3>
-              {!summary ? (
-                <div className="h-5 w-24 bg-slate-200 rounded animate-pulse mt-1"></div>
-              ) : (
-                <span className="inline-block bg-slate-100 text-slate-800 border border-slate-200 text-[10.5px] font-extrabold px-2.5 py-0.5 rounded uppercase">
-                  {roleLabel ?? '—'}
-                </span>
-              )}
+              {/* Neutral pill - NO yellow background */}
+              <span className="inline-block bg-slate-100 text-slate-800 border border-slate-200 text-[10.5px] font-extrabold px-2.5 py-0.5 rounded uppercase">
+                {roleLabel ?? '—'}
+              </span>
             </div>
 
             <div className="pt-3 md:pt-0 md:px-5">
               <h3 className="text-[9.5px] font-extrabold text-slate-400 tracking-wider uppercase mb-1">LOAN PRIVILEGE LIMIT</h3>
-              <div className="font-extrabold text-[#0f172a] text-[13px]">
-                {!summary ? (
-                  <div className="h-4 w-48 bg-slate-200 rounded animate-pulse mt-1"></div>
-                ) : summary.can_borrow === false ? (
-                  'Management account — borrowing not available'
-                ) : (
-                  `${borrowLimit ? `Max ${borrowLimit} Books` : 'No borrowing limit'} (${loanDays}-Day Loan)`
-                )}
-              </div>
+              <p className="font-extrabold text-[#0f172a] text-[13px]">
+                {!summary
+                  ? 'Loading your borrowing rule…'
+                  : summary.can_borrow === false
+                    ? 'Management account — borrowing not available'
+                    : `${borrowLimit ? `Max ${borrowLimit} Books` : 'No borrowing limit'} (${loanDays}-Day Loan)`}
+              </p>
             </div>
 
             <div className="pt-3 md:pt-0 md:pl-5">
               <h3 className="text-[9.5px] font-extrabold text-slate-400 tracking-wider uppercase mb-1">OVERDUE LATE FINE</h3>
-              <div className="font-extrabold text-[#0f172a] text-[13px]">
-                {!summary ? (
-                  <div className="h-4 w-24 bg-slate-200 rounded animate-pulse mt-1"></div>
-                ) : (
-                  `${peso(dailyRate)} / Day`
-                )}
-              </div>
+              <p className="font-extrabold text-[#0f172a] text-[13px]">
+                {peso(dailyRate)} / Day
+              </p>
             </div>
           </div>
         </div>
@@ -3046,13 +3028,3 @@ function LibraryPortalContent() {
 }
 
 
-
-export default function LibraryPortal() {
-  return (
-    <ToastProvider>
-      <ConfirmDialogProvider>
-        <LibraryPortalContent />
-      </ConfirmDialogProvider>
-    </ToastProvider>
-  );
-}
