@@ -5,17 +5,24 @@ services:
     container_name: scisp_backend
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend:/var/www/html
     environment:
       - DB_CONNECTION=mysql
       - DB_HOST=db
       - DB_PORT=3306
-      - DB_DATABASE=laravel
+      - DB_DATABASE=scisp_integrated
       - DB_USERNAME=root
       - DB_PASSWORD=secret
+      - MAIL_MAILER=smtp
+      - MAIL_HOST=smtp.gmail.com
+      - MAIL_PORT=465
+      - MAIL_USERNAME=estivakirsten1214@gmail.com
+      - MAIL_PASSWORD=usqewfeqmzhdfgjo
+      - MAIL_ENCRYPTION=smtps
+      - MAIL_FROM_ADDRESS=estivakirsten1214@gmail.com
+      - MAIL_FROM_NAME=SCISP Admin
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - app-network
 
@@ -25,10 +32,10 @@ services:
     container_name: scisp_frontend
     ports:
       - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    command: sh -c "npm install && npm run dev -- --host"
+    environment:
+      - VITE_API_URL=http://localhost:8000/api
+    depends_on:
+      - backend
     networks:
       - app-network
 
@@ -38,13 +45,18 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: laravel
+      MYSQL_DATABASE: scisp_integrated
     ports:
       - "3307:3306"
     volumes:
       - db-data:/var/lib/mysql
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-psecret"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   db-data:
