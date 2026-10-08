@@ -6,6 +6,7 @@ import RegistrationStatusModal from './RegistrationStatusModal';
 import FirstTimePasswordModal from './FirstTimePasswordModal';
 import GoogleAuthModal from './GoogleAuthModal';
 import ForgotPasswordModal from './ForgotPasswordModal';
+import ResetPasswordModal from './ResetPasswordModal';
 
 export default function Login({ onLogin }) {
   const navigate = useNavigate();
@@ -51,7 +52,8 @@ export default function Login({ onLogin }) {
   const urlResetToken = searchParams.get('token') || '';
   const urlResetEmail = searchParams.get('email') || '';
 
-  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+  const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(
     isDirectReset && (urlResetToken !== '' || urlResetEmail !== '')
   );
   const [resetEmail, setResetEmail] = useState(urlResetEmail);
@@ -398,16 +400,20 @@ export default function Login({ onLogin }) {
         isOpen={isForgotPasswordOpen}
         onClose={() => {
           setIsForgotPasswordOpen(false);
-          setResetEmail('');
-          setResetToken('');
         }}
-        onSuccess={(recoveredUsername) => {
-          if (recoveredUsername) {
-            setUsername(recoveredUsername);
+      />
+
+      {/* Reset Password Modal (from email link) */}
+      <ResetPasswordModal
+        isOpen={isResetPasswordOpen}
+        email={resetEmail}
+        token={resetToken}
+        onClose={() => {
+          setIsResetPasswordOpen(false);
+          if (isDirectReset) {
+            navigate('/auth', { replace: true });
           }
         }}
-        initialEmail={resetEmail}
-        initialToken={resetToken}
       />
     </div>
   );
