@@ -111,11 +111,46 @@ class DashboardController extends Controller
                 'academic_standing' => $academicStanding
             ];
         } elseif (in_array($role, ['teacher', 'faculty'])) {
+            $faculty = DB::table('faculty')->where('user_id', $user->user_id)->first();
+            
+            $assignedSections = 0;
+            $todaysClassesFormatted = [];
+
+            if ($faculty) {
+                $assignedSections = DB::table('schedules')
+                    ->where('faculty_id', $faculty->faculty_id)
+                    ->whereNull('archived_at')
+                    ->distinct('section')
+                    ->count('section');
+                    
+                $todaysClasses = DB::table('schedules')
+                    ->join('subjects', 'schedules.subject_id', '=', 'subjects.subject_id')
+                    ->where('schedules.faculty_id', $faculty->faculty_id)
+                    ->where('schedules.day', date('l'))
+                    ->whereNull('schedules.archived_at')
+                    ->orderBy('schedules.start_time')
+                    ->select('subjects.subject_code', 'subjects.subject_name', 'schedules.room', 'schedules.section', 'schedules.start_time', 'schedules.end_time', 'schedules.level', 'schedules.year')
+                    ->get();
+                    
+                foreach($todaysClasses as $cls) {
+                    $todaysClassesFormatted[] = [
+                        'course_code' => $cls->subject_code,
+                        'course_name' => $cls->subject_name,
+                        'room' => $cls->room,
+                        'section' => $cls->section,
+                        'level' => $cls->level,
+                        'year' => $cls->year,
+                        'time_slot' => date('h:i a', strtotime($cls->start_time)) . ' - ' . date('h:i a', strtotime($cls->end_time))
+                    ];
+                }
+            }
+
             $response['teacher_metrics'] = [
-                'assigned_sections' => 5,
+                'assigned_sections' => $assignedSections,
                 'student_advisees' => 35,
                 'grading_submissions' => '80%',
-                'syllabus_coverage' => 'Week 6'
+                'syllabus_coverage' => 'Week 6',
+                'todays_classes' => $todaysClassesFormatted
             ];
         } elseif (in_array($role, ['admin', 'administrator', 'superadmin', 'super admin'])) {
             $totalEnrollees = User::where('role', 'student')->count();

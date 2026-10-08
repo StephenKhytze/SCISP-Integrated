@@ -605,76 +605,43 @@ export default function Dashboard() {
                 </p>
               </div>
               <span className="px-3 py-1 bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold rounded-full">
-                3 Classes Today
+                {metrics?.teacher_metrics?.todays_classes?.length || 0} Classes Today
               </span>
             </div>
 
             <div className="space-y-3.5">
-              {/* Teacher Class 1 */}
-              <div className="bg-[#f8faff] border border-blue-100 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="flex items-center space-x-3.5">
-                  <div className="bg-[#1E3A8A] text-white font-extrabold text-xs sm:text-sm px-3 py-2 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
-                    IT 311
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-snug">
-                      Web Development with React &amp; Laravel
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                      BSIT 3-A • Lab 402 Tech Building (42 Students)
-                    </p>
-                  </div>
+              {!metrics?.teacher_metrics?.todays_classes || metrics.teacher_metrics.todays_classes.length === 0 ? (
+                <div className="py-8 text-center">
+                  <Calendar className="w-10 h-10 mx-auto text-slate-300 mb-3" />
+                  <p className="text-sm font-medium text-slate-500">No current classes for today</p>
                 </div>
-                <div className="self-start sm:self-center">
-                  <span className="inline-block px-3.5 py-1.5 rounded-full border border-blue-200 text-[#1E3A8A] text-xs font-bold bg-white shadow-2xs">
-                    08:00 - 10:30 am
-                  </span>
-                </div>
-              </div>
-
-              {/* Teacher Class 2 */}
-              <div className="bg-[#f8faff] border border-blue-100 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="flex items-center space-x-3.5">
-                  <div className="bg-[#1E3A8A] text-white font-extrabold text-xs sm:text-sm px-3 py-2 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
-                    CS 201
+              ) : (
+                metrics.teacher_metrics.todays_classes.map((cls, idx) => (
+                  <div 
+                    key={idx}
+                    className="bg-[#f8faff] border border-blue-100 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  >
+                    <div className="flex items-center space-x-3.5">
+                      <div className="bg-[#1E3A8A] text-white font-extrabold text-xs sm:text-sm px-3 py-2 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+                        {cls.course_code}
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-snug">
+                          {cls.course_name}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                          {cls.year}-{cls.section} • {cls.room || 'TBA'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="self-start sm:self-center">
+                      <span className="inline-block px-3.5 py-1.5 rounded-full border border-blue-200 text-[#1E3A8A] text-xs font-bold bg-white shadow-2xs">
+                        {cls.time_slot}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-snug">
-                      Data Structures &amp; Algorithms
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                      BSCS 2-B • Room 305 Main Hall (38 Students)
-                    </p>
-                  </div>
-                </div>
-                <div className="self-start sm:self-center">
-                  <span className="inline-block px-3.5 py-1.5 rounded-full border border-blue-200 text-[#1E3A8A] text-xs font-bold bg-white shadow-2xs">
-                    11:00 - 01:00 pm
-                  </span>
-                </div>
-              </div>
-
-              {/* Teacher Class 3 */}
-              <div className="bg-[#f8faff] border border-blue-100 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="flex items-center space-x-3.5">
-                  <div className="bg-[#1E3A8A] text-white font-extrabold text-xs sm:text-sm px-3 py-2 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
-                    IT 405
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-snug">
-                      Systems Integration and Architecture
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                      BSIT 4-A • Lab 405 Tech Building (35 Students)
-                    </p>
-                  </div>
-                </div>
-                <div className="self-start sm:self-center">
-                  <span className="inline-block px-3.5 py-1.5 rounded-full border border-blue-200 text-[#1E3A8A] text-xs font-bold bg-white shadow-2xs">
-                    02:00 - 04:30 pm
-                  </span>
-                </div>
-              </div>
+                ))
+              )}
             </div>
           </div>
         </>
