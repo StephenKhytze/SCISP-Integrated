@@ -40,8 +40,8 @@ class DashboardController extends Controller
             'role' => $role,
             'current_term' => "$ay $sem",
             'announcements' => [
-                'total' => $announcementsCount > 0 ? $announcementsCount : 3,
-                'urgent' => $urgentAnnouncementsCount > 0 ? $urgentAnnouncementsCount : 1
+                'total' => $announcementsCount,
+                'urgent' => $urgentAnnouncementsCount
             ]
         ];
 
@@ -82,33 +82,49 @@ class DashboardController extends Controller
                 }
             }
             
-            if ($enrolledSections->count() > 0) {
-                // If they have real classes, count them
-                $classesTodayCount = DB::table('schedules')
-                    ->whereIn('section', function($q) use ($enrolledSections) {
-                        $q->select('name')->from('course_sections')->whereIn('section_id', $enrolledSections);
-                    })
-                    ->count(); // simplistic approach
+            $todaysClassesFormatted = [];
 
-                $nextSched = DB::table('schedules')
+            if ($enrolledSections->count() > 0) {
+                $todaysClasses = DB::table('schedules')
                     ->join('subjects', 'schedules.subject_id', '=', 'subjects.subject_id')
+                    ->leftJoin('faculty', 'schedules.faculty_id', '=', 'faculty.faculty_id')
                     ->whereIn('schedules.section', function($q) use ($enrolledSections) {
                         $q->select('name')->from('course_sections')->whereIn('section_id', $enrolledSections);
                     })
+                    ->where('schedules.day', date('l'))
                     ->orderBy('schedules.start_time')
-                    ->first();
+                    ->get();
+                    
+                $classesTodayCount = $todaysClasses->count();
+                
+                $nextSched = $todaysClasses->firstWhere('start_time', '>=', date('H:i:s'));
+                if (!$nextSched) {
+                    $nextSched = $todaysClasses->first();
+                }
+
                 if ($nextSched) {
                     $nextClass = $nextSched->subject_code . ' (' . date('g:i A', strtotime($nextSched->start_time)) . ')';
+                }
+                
+                foreach($todaysClasses as $cls) {
+                    $todaysClassesFormatted[] = [
+                        'course_code' => $cls->subject_code,
+                        'course_name' => $cls->subject_name,
+                        'room' => $cls->room,
+                        'instructor' => $cls->first_name ? ($cls->first_name . ' ' . $cls->last_name) : 'TBA',
+                        'time_slot' => date('h:i a', strtotime($cls->start_time)) . ' - ' . date('h:i a', strtotime($cls->end_time))
+                    ];
                 }
             }
 
             $response['student_metrics'] = [
-                'classes_today' => $classesTodayCount > 0 ? $classesTodayCount : 4,
-                'next_class' => $nextClass ? $nextClass : 'IT 311 (8:00 AM)',
+                'classes_today' => $classesTodayCount,
+                'next_class' => $nextClass ? $nextClass : 'None scheduled',
                 'borrowed_books' => $borrowedBooksCount,
-                'due_in_days' => 7,
+                'due_in_days' => 0,
                 'gpa' => number_format($gpa, 2),
-                'academic_standing' => $academicStanding
+                'academic_standing' => $academicStanding,
+                'todays_classes' => $todaysClassesFormatted
             ];
         } elseif (in_array($role, ['teacher', 'faculty'])) {
             $faculty = DB::table('faculty')->where('user_id', $user->user_id)->first();
@@ -157,15 +173,15 @@ class DashboardController extends Controller
             $activeFaculty = User::where('role', 'faculty')->count();
 
             $response['admin_metrics'] = [
-                'total_enrollees' => $totalEnrollees > 0 ? $totalEnrollees : 1245,
-                'active_faculty' => $activeFaculty > 0 ? $activeFaculty : 84,
-                'section_capacity' => '85%',
-                'enlistment_overrides' => 12
+                'total_enrollees' => $totalEnrollees,
+                'active_faculty' => $activeFaculty,
+                'section_capacity' => '0%',
+                'enlistment_overrides' => 0
             ];
             
             if (in_array($role, ['superadmin', 'super admin'])) {
                 $response['superadmin_metrics'] = [
-                    'active_sessions' => DB::table('sessions')->count() ?? 42,
+                    'active_sessions' => DB::table('sessions')->count(),
                     'uptime' => '99.9%',
                     'security_threats' => 0,
                     'storage_load' => '45%'
