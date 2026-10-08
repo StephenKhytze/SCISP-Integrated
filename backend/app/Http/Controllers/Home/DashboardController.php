@@ -43,6 +43,29 @@ class DashboardController extends Controller
                 
             $classesTodayCount = 0;
             $nextClass = null;
+
+            // Calculate GPA and get Academic Standing
+            $studentData = DB::table('students')->where('user_id', $user->user_id)->first();
+            $gpa = 1.25;
+            $academicStanding = "Good Standing";
+            
+            if ($studentData) {
+                $academicRecord = DB::table('academic_records')->where('student_id', $studentData->student_id)->first();
+                if ($academicRecord) {
+                    $academicStanding = $academicRecord->academic_standing ?? "Good Standing";
+                    
+                    $grades = DB::table('grades')->where('academic_record_id', $academicRecord->id)->pluck('final_grade');
+                    if ($grades->count() > 0) {
+                        $gpa = round($grades->avg(), 2);
+                        
+                        // Optional: auto-determine standing if not set
+                        if (!$academicRecord->academic_standing) {
+                            if ($gpa <= 1.20) $academicStanding = "President's Lister";
+                            elseif ($gpa <= 1.75) $academicStanding = "Dean's List Scholar";
+                        }
+                    }
+                }
+            }
             
             if ($enrolledSections->count() > 0) {
                 // If they have real classes, count them
@@ -69,8 +92,8 @@ class DashboardController extends Controller
                 'next_class' => $nextClass ? $nextClass : 'IT 311 (8:00 AM)',
                 'borrowed_books' => $borrowedBooksCount,
                 'due_in_days' => 7,
-                'gpa' => 1.25,
-                'academic_standing' => "Dean's List • Good Standing"
+                'gpa' => number_format($gpa, 2),
+                'academic_standing' => $academicStanding
             ];
         } elseif (in_array($role, ['teacher', 'faculty'])) {
             $response['teacher_metrics'] = [
