@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
         $student = \App\Models\Student::updateOrCreate(
             ['student_number' => '2024-01214'],
             [
-                'user_id' => $studentUser->id,
+                'user_id' => $studentUser->user_id,
                 'first_name' => 'Kirsten Eve',
                 'last_name' => 'Estiva',
                 'email_address' => 'kirsten.estiva@abc.edu.ph',
