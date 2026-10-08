@@ -15,7 +15,9 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
+            'remember' => 'nullable|boolean',
         ]);
+        $remember = $request->boolean('remember');
 
         try {
             $user = User::where('username', $credentials['username'])->first();
@@ -79,13 +81,17 @@ class AuthController extends Controller
         }
 
         try {
-            $jwt = \App\Services\JwtService::generateToken($user, [
+            $claims = [
                 'name' => $name,
                 'role' => $role,
                 'department' => $department,
                 'idNumber' => $idNumber,
                 'must_change_password' => (bool)$user->must_change_password,
-            ]);
+            ];
+            if ($remember) {
+                $claims['exp'] = time() + (30 * 24 * 3600);
+            }
+            $jwt = \App\Services\JwtService::generateToken($user, $claims);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to generate authentication token: ' . $e->getMessage()

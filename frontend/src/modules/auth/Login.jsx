@@ -2,15 +2,18 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import GoogleAuthModal from './GoogleAuthModal';
+import ForgotPasswordModal from './ForgotPasswordModal';
 
 export default function Login({ onLogin }) {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [remember, setRemember] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
+  const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,6 +24,7 @@ export default function Login({ onLogin }) {
       const response = await api.post('/auth/login', {
         username,
         password,
+        remember,
       });
 
       localStorage.setItem('access_token', response.data.access_token);
@@ -127,6 +131,8 @@ export default function Login({ onLogin }) {
               <input
                 type="checkbox"
                 id="remember"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
                 className="w-4 h-4 text-[#182848] border-gray-300 rounded focus:ring-[#182848]"
               />
               <label htmlFor="remember" className="ml-2 text-sm text-gray-600 font-medium">
@@ -143,9 +149,13 @@ export default function Login({ onLogin }) {
             </button>
             
             <div className="text-center pt-4">
-              <a href="#" className="text-sm font-bold text-[#182848] hover:underline">
+              <button
+                type="button"
+                onClick={() => setIsForgotModalOpen(true)}
+                className="text-sm font-bold text-[#182848] hover:underline cursor-pointer"
+              >
                 Forgot Password?
-              </a>
+              </button>
             </div>
           </form>
 
@@ -178,6 +188,11 @@ export default function Login({ onLogin }) {
           navigate('/');
         }}
         onSwitchToRegister={() => navigate('/register')}
+      />
+      
+      <ForgotPasswordModal 
+        isOpen={isForgotModalOpen}
+        onClose={() => setIsForgotModalOpen(false)}
       />
     </div>
   );
