@@ -108,6 +108,8 @@ class DatabaseSeeder extends Seeder
             LibrarySeeder::class,
             SubjectSeeder::class,
             FacultySeeder::class,
+            IntegrationDemoSeeder::class,
+            ScheduleSeeder::class,
         ]);
     }
 }
